@@ -1,0 +1,9 @@
+TODO FOR ENGINE:
+Entities
+Entity rendering
+Shaders 
+Shader rendering on entities
+GUI (Will use yoga and Nuklear instead of re-creating the wheel)
+Game State handler/Game states (where the meat of the game code will be)
+Entity States and handling (state interface to create states and add behavior to
+    entities)
