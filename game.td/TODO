@@ -1,5 +1,5 @@
 TODO FOR ENGINE:
-GUI (Will use yoga and Nuklear instead of re-creating the wheel)
+GUI (Will use legui, easier to use and manage than nuklear)
 Game State handler/Game states (where the meat of the game code will be)
 Entity States and handling (state interface to create states and add behavior to
     entities)

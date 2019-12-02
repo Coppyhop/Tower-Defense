@@ -13,7 +13,16 @@
 	<properties>
 		<lwjgl.version>3.2.3</lwjgl.version>
 		<joml.version>1.9.19</joml.version>
+    <maven.compiler.target>1.8</maven.compiler.target>
+    <maven.compiler.source>1.8</maven.compiler.source>
 	</properties>
+	
+	<repositories>
+    <repository>
+        <id>legui</id>
+        <url>https://raw.github.com/SpinyOwl/repo/releases</url>
+    </repository>
+</repositories>
 
 	<profiles>
 		<profile>
@@ -93,10 +102,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-nuklear</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-openal</artifactId>
 		</dependency>
 		<dependency>
@@ -106,10 +111,6 @@
 		<dependency>
 			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-stb</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-yoga</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
@@ -128,11 +129,6 @@
 		</dependency>
 		<dependency>
 			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-nuklear</artifactId>
-			<classifier>${lwjgl.natives}</classifier>
-		</dependency>
-		<dependency>
-			<groupId>org.lwjgl</groupId>
 			<artifactId>lwjgl-openal</artifactId>
 			<classifier>${lwjgl.natives}</classifier>
 		</dependency>
@@ -147,11 +143,6 @@
 			<classifier>${lwjgl.natives}</classifier>
 		</dependency>
 		<dependency>
-			<groupId>org.lwjgl</groupId>
-			<artifactId>lwjgl-yoga</artifactId>
-			<classifier>${lwjgl.natives}</classifier>
-		</dependency>
-		<dependency>
 			<groupId>org.l33tlabs.twl</groupId>
 			<artifactId>pngdecoder</artifactId>
 			<version>1.0</version>
@@ -160,6 +151,11 @@
 			<groupId>org.joml</groupId>
 			<artifactId>joml</artifactId>
 			<version>${joml.version}</version>
+		</dependency>
+		<dependency>
+   			<groupId>org.liquidengine</groupId>
+   			<artifactId>legui</artifactId>
+   			<version>1.4.0</version>
 		</dependency>
 	</dependencies>
 </project>
