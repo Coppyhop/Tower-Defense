@@ -1,6 +1,9 @@
 package com.coppyhop.game.td.renderer;
 
 import org.lwjgl.opengl.GL11;
+
+import com.coppyhop.game.td.entity.Entity;
+
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
@@ -21,6 +24,8 @@ public class RenderEngine {
 	
 	private int width, height;
 	private float UIScale;
+	private long deltaTime;
+	private long lastFrame;
 	
 	public RenderEngine(int width, int height, float UIScale){
 		this.width = width;
@@ -46,12 +51,18 @@ public class RenderEngine {
 		GL11.glOrtho(-width/2, width/2, height/2, -height/2, 1, -1);
 		GL11.glTranslatef(-width/2, -height/2, 0);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		lastFrame = System.nanoTime()/ 1000000;
 	}
 
 	public void prepareRender(){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
+	public void endRender() {
+		long time = System.nanoTime()/ 1000000;
+		deltaTime = time - lastFrame;
+		lastFrame = time;
+	}
 	public float getWidth(){
 		return width/UIScale;
 	}
@@ -62,6 +73,10 @@ public class RenderEngine {
 	
 	public float getUIScale() {
 		return UIScale;
+	}
+	
+	public float getDeltaTime() {
+		return deltaTime;
 	}
 	
 	public void setTexture(Texture texture){
@@ -101,6 +116,22 @@ public class RenderEngine {
 		GL11.glTexCoord2f(u1, v2);
 		GL11.glVertex2f(x*UIScale, (y+height)*UIScale);
 		GL11.glEnd();
+	}
+	
+	/**
+	 * renderEntity
+	 * 
+	 * renders the given entity to the canvas. Using the values stored in it to
+	 * determine its properties. Should not generally be called to render
+	 * entities in a game. Instead batch rendering should be used.
+	 * TODO: Implement Batch rendering (lol)
+	 * 
+	 * @param entity
+	 */
+	public void renderEntity(Entity entity) {
+		setTexture(entity.getSprite());
+		drawRectangle(entity.getX(), entity.getY(), entity.getWidth(), 
+				entity.getHeight());
 	}
 
 }

@@ -26,7 +26,7 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
 public class Loader {
 	//TODO: Make all these methods static they in no way really rely on a loader
 	//instance being made
-	public Texture loadTexture(String filename){
+	public static Texture loadTexture(String filename){
 		ByteBuffer buf = null;
 		int tWidth = 0;
 		int tHeight = 0;
