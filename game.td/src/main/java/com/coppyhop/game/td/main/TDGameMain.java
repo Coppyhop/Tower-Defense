@@ -5,6 +5,7 @@ import com.coppyhop.game.td.renderer.Loader;
 import com.coppyhop.game.td.renderer.RenderEngine;
 import com.coppyhop.game.td.renderer.Texture;
 import com.coppyhop.game.td.renderer.WindowManager;
+import com.coppyhop.game.td.renderer.shaders.TestShader;
 
 /**
  * TDGameMain
@@ -23,10 +24,12 @@ public class TDGameMain {
 	private static RenderEngine renderer;
 	public static void main(String[] args) {
 		WindowManager.init();
-		window = WindowManager.createWindow(640, 480, "TDGame", true);
+		window = WindowManager.createWindow(640, 480, "TDGame - OpenGL 2.0", true);
 		renderer = new RenderEngine(640,480);
+		TestShader shader = new TestShader();
 		Texture test = Loader.loadTexture("/home/kyle/Pictures/mister.anon.png");
 		Entity anon = new Entity(0,0,8,8, 0, test);
+		anon.setShader(shader);
 		while(!WindowManager.shouldWindowClose(window)) {
 			renderer.prepareRender();
 			anon.setWidth(anon.getWidth()+0.1f*renderer.getDeltaTime());
@@ -36,6 +39,7 @@ public class TDGameMain {
 			renderer.endRender();
 			WindowManager.update(window);
 		}
+		shader.cleanUp();
 		WindowManager.destroyWindow(window);
 	}
 	

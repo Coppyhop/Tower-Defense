@@ -39,7 +39,8 @@ public class BitmapString {
 		return string;
 	}
 	
-	public void render(float x, float y, RenderEngine renderer){
+	//TODO: Re-Do this method with the new rendering engine shader shit
+	/*public void render(float x, float y, RenderEngine renderer){
 		int curx = 0;
 		GL11.glPushMatrix();
 		GL11.glTranslatef(x*renderer.getUIScale(), y*renderer.getUIScale(), 0);
@@ -55,7 +56,7 @@ public class BitmapString {
 		    curx+= g.getXadvance();
 		}
 		GL11.glPopMatrix();
-	}
+	}*/
 
 	public float getWidth(){
 		int x = 0;

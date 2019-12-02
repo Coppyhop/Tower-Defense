@@ -1,6 +1,7 @@
 package com.coppyhop.game.td.entity;
 
 import com.coppyhop.game.td.renderer.Texture;
+import com.coppyhop.game.td.renderer.shaders.ShaderProgram;
 
 /**
  * Entity
@@ -20,6 +21,7 @@ public class Entity {
 	private float height;
 	private float rotation;
 	private Texture sprite;
+	private ShaderProgram shader;
 	
 	public Entity(float x, float y, float width, float height, float rotation,
 			Texture sprite) {
@@ -29,6 +31,14 @@ public class Entity {
 		this.height = height;
 		this.rotation = rotation;
 		this.sprite = sprite;
+	}
+
+	public ShaderProgram getShader() {
+		return shader;
+	}
+
+	public void setShader(ShaderProgram shader) {
+		this.shader = shader;
 	}
 
 	public float getX() {

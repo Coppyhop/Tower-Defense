@@ -30,12 +30,30 @@ public class WindowManager {
         }
     }
 
+    /**
+     * createWindow
+     * 
+     * Uses GLFW to create a window on the user's screen with the given 
+     * information. It also creates an openGL context for the rest of the
+     * engine to draw to on that window, giving us effectively what the user
+     * will perceive as the game.
+     * 
+     * @param width The starting width of the game canvas
+     * @param height The starting height of the game canvas
+     * @param title The title of the window to be shown to the user
+     * @param vSync Sync to the vertical blank
+     * @return long The ID of the window so that it can be managed with other
+     *              glfw methods
+     */
     public static long createWindow(int width, int height, 
     		String title, boolean vSync){
         glfwDefaultWindowHints();
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+        //Make sure the client has at least openGL 2 for our features
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         long window = glfwCreateWindow(width, height, title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");

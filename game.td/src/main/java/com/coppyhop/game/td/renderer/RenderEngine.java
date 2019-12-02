@@ -1,11 +1,18 @@
 package com.coppyhop.game.td.renderer;
 
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL15;
+import org.lwjgl.opengl.GL20;
 
 import com.coppyhop.game.td.entity.Entity;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
+
+import java.nio.FloatBuffer;
+import java.nio.IntBuffer;
+
+import org.lwjgl.BufferUtils;
 
 /**
  * RenderEngine
@@ -27,6 +34,22 @@ public class RenderEngine {
 	private long deltaTime;
 	private long lastFrame;
 	
+	//Vertex and index data for a 2D rectangle (only shape needed for 2D games)
+	private float[] vertices = {
+			    -1f, 1f, 0f,
+			    -1f, -1f, 0f,
+			    1f, -1f, 0f,
+			    1f, 1f, 0f,
+			  };
+	
+	private int[] indicies = {
+			0,1,3,3,1,2
+	};
+	
+	//Buffer ids
+	private int rectVBOId;
+	private int iboID;
+	
 	public RenderEngine(int width, int height, float UIScale){
 		this.width = width;
 		this.height = height;
@@ -42,16 +65,37 @@ public class RenderEngine {
 	}
 
 	private void initOpenGL(int width, int height){
-		GL11.glViewport(0, 0, width, height);
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-		GL11.glMatrixMode(GL11.GL_PROJECTION);
-		GL11.glLoadIdentity();
-		GL11.glOrtho(-width/2, width/2, height/2, -height/2, 1, -1);
-		GL11.glTranslatef(-width/2, -height/2, 0);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		loadVertices();
 		lastFrame = System.nanoTime()/ 1000000;
+	}
+	
+	/**
+	 * loadVertices
+	 * 
+	 * Loads up the built-in vertex and index data to GL Buffers, allowing us to
+	 * use shaders more effectively and draw things upon the screen better.
+	 */
+	public void loadVertices() {
+		rectVBOId = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
+		FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.length);
+		buffer.put(vertices);
+		buffer.flip();
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		
+		iboID = GL15.glGenBuffers();
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
+		IntBuffer buffer2 = BufferUtils.createIntBuffer(indicies.length);
+		buffer2.put(indicies);
+		buffer2.flip();
+		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer2, GL15.GL_STATIC_DRAW);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
 	public void prepareRender(){
@@ -63,6 +107,7 @@ public class RenderEngine {
 		deltaTime = time - lastFrame;
 		lastFrame = time;
 	}
+	
 	public float getWidth(){
 		return width/UIScale;
 	}
@@ -87,35 +132,31 @@ public class RenderEngine {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 	}
 
-	public void setColor(float r, float g, float b, float a){
+	//Might not even be needed anymore with shaders
+	/*public void setColor(float r, float g, float b, float a){
 		GL11.glColor4f(r,g,b,a);
-	}
+	}*/
 
+	/**
+	 * drawRectangle
+	 * Draws a rectangle on the screen using the given x, y, width, and height
+	 * to determine where it is and how big it is. This uses this class' vbo
+	 * and ibo to draw the rectangle on the screen.
+	 * 
+	 * @param x The x-coordinate of this rectangle
+	 * @param y The y-coordinate of this rectangle
+	 * @param width The width fo this rectangle
+	 * @param height The height of this rectangle
+	 */
 	public void drawRectangle(float x, float y, float width, float height){
-		GL11.glBegin(GL_QUADS);
-		GL11.glTexCoord2f(0, 0);
-		GL11.glVertex2f(x*UIScale, y*UIScale);
-		GL11.glTexCoord2f(1, 0);
-		GL11.glVertex2f((x+width)*UIScale, y*UIScale);
-		GL11.glTexCoord2f(1, 1);
-		GL11.glVertex2f((x+width)*UIScale,(y+height)*UIScale);
-		GL11.glTexCoord2f(0, 1);
-		GL11.glVertex2f(x*UIScale, (y+height)*UIScale);
-		GL11.glEnd();
-	}
-
-	public void drawRectangle(float x, float y, float width, float height, 
-			float u1, float v1, float u2, float v2){
-		GL11.glBegin(GL_QUADS);
-		GL11.glTexCoord2f(u1, v1);
-		GL11.glVertex2f(x*UIScale, y*UIScale);
-		GL11.glTexCoord2f(u2, v1);
-		GL11.glVertex2f((x+width)*UIScale, y*UIScale);
-		GL11.glTexCoord2f(u2, v2);
-		GL11.glVertex2f((x+width)*UIScale,(y+height)*UIScale);
-		GL11.glTexCoord2f(u1, v2);
-		GL11.glVertex2f(x*UIScale, (y+height)*UIScale);
-		GL11.glEnd();
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
+		GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
+		GL20.glDisableVertexAttribArray(0);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 	
 	/**
@@ -129,9 +170,13 @@ public class RenderEngine {
 	 * @param entity
 	 */
 	public void renderEntity(Entity entity) {
+		if(entity.getShader() != null)
+			entity.getShader().start();
 		setTexture(entity.getSprite());
 		drawRectangle(entity.getX(), entity.getY(), entity.getWidth(), 
 				entity.getHeight());
+		if(entity.getShader() != null)
+			entity.getShader().stop();
 	}
 
 }
