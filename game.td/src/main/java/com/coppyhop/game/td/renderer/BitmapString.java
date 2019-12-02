@@ -4,7 +4,10 @@ import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-/**
+/** * LEGACY CODE - CURRENTLY INACCESSIBLE BY ANY NORMAL MEANS
+ * I need to refactor all of text stuff using the new rendering system, so
+ * I disabled it. 
+ * 
  * BitmapString
  * 
  * This represents a string of characters that will be rendered to the user's 

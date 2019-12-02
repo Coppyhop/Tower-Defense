@@ -1,6 +1,10 @@
 package com.coppyhop.game.td.renderer;
 
 /**
+ * LEGACY CODE - CURRENTLY INACCESSIBLE BY ANY NORMAL MEANS
+ * I need to refactor all of text stuff using the new rendering system, so
+ * I disabled it. 
+ * 
  * BitmapGlyph
  * 
  * Represents a single glyph (character) for a given font. Contains where the 

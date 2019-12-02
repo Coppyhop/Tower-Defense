@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 
 import com.coppyhop.game.td.entity.Entity;
+import com.coppyhop.game.td.renderer.shaders.BaseShader;
 
 import static org.lwjgl.opengl.GL11.*;
 import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
@@ -33,13 +34,14 @@ public class RenderEngine {
 	private float UIScale;
 	private long deltaTime;
 	private long lastFrame;
+	private BaseShader shader;
 	
 	//Vertex and index data for a 2D rectangle (only shape needed for 2D games)
 	private float[] vertices = {
-		-1f, 1f, 0f,
-		-1f, -1f, 0f,
+		0f, 0f, 0f,
+		0f, -1f, 0f,
 		1f, -1f, 0f,
-		1f, 1f, 0f,
+		1f, 0f, 0f,
 	};
 	private float[] textureCoords = {0,0,0,1,1,1,1,0};
 	private int[] indicies = {0,1,3,3,1,2};
@@ -69,6 +71,7 @@ public class RenderEngine {
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		loadVertices();
 		lastFrame = System.nanoTime()/ 1000000;
+		shader = new BaseShader();
 	}
 	
 	/**
@@ -102,9 +105,20 @@ public class RenderEngine {
 
 	public void prepareRender(){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, vertices.length*4);
+		
 	}
 
 	public void endRender() {
+		GL20.glEnableVertexAttribArray(1);
+		GL20.glDisableVertexAttribArray(0);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 		long time = System.nanoTime()/ 1000000;
 		deltaTime = time - lastFrame;
 		lastFrame = time;
@@ -140,31 +154,6 @@ public class RenderEngine {
 	}*/
 
 	/**
-	 * drawRectangle
-	 * Draws a rectangle on the screen using the given x, y, width, and height
-	 * to determine where it is and how big it is. This uses this class' vbo
-	 * and ibo to draw the rectangle on the screen.
-	 * 
-	 * @param x The x-coordinate of this rectangle
-	 * @param y The y-coordinate of this rectangle
-	 * @param width The width fo this rectangle
-	 * @param height The height of this rectangle
-	 */
-	public void drawRectangle(float x, float y, float width, float height){
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
-		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, vertices.length*4);
-		GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glDisableVertexAttribArray(0);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-	}
-	
-	/**
 	 * renderEntity
 	 * 
 	 * renders the given entity to the canvas. Using the values stored in it to
@@ -175,13 +164,13 @@ public class RenderEngine {
 	 * @param entity
 	 */
 	public void renderEntity(Entity entity) {
-		if(entity.getShader() != null)
-			entity.getShader().start();
+		shader.start();
+		shader.color(1, 1, 1);
+		shader.position(entity.getPosition());
+		shader.uploadTransformationMatrix(entity.getTranslation());
 		setTexture(entity.getSprite());
-		drawRectangle(entity.getX(), entity.getY(), entity.getWidth(), 
-				entity.getHeight());
-		if(entity.getShader() != null)
-			entity.getShader().stop();
+		GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
+		shader.stop();
 	}
 
 }

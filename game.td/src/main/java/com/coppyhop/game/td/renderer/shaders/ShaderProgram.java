@@ -3,9 +3,14 @@ package com.coppyhop.game.td.renderer.shaders;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.FloatBuffer;
 
+import org.joml.Matrix3f;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.system.MemoryStack;
 
 /**
  * ShaderProgram
@@ -33,6 +38,25 @@ public abstract class ShaderProgram {
 		GL20.glLinkProgram(programID);
 		GL20.glValidateProgram(programID);
 		bindAttributes();
+		getAllUniformLocations();
+	}
+	
+	protected int getUniformLocation(String uniformName) {
+		return GL20.glGetUniformLocation(programID, uniformName);
+	}
+	
+	protected void loadMatrix4f(int location, Matrix4f value) {
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			  FloatBuffer fb = new Matrix4f(value).get(stack.mallocFloat(16));
+			  GL20.glUniformMatrix4fv(location, false, fb);
+		}
+	}
+	
+	protected void loadVector3f(int location, Vector3f value) {
+		try (MemoryStack stack = MemoryStack.stackPush()) {
+			  FloatBuffer fb = new Vector3f(value).get(stack.mallocFloat(3));
+			  GL20.glUniform3fv(location, fb);
+		}
 	}
 	
 	public void start() {
@@ -59,6 +83,8 @@ public abstract class ShaderProgram {
 	}
 	
 	protected abstract void bindAttributes();
+	
+	protected abstract void getAllUniformLocations();
 	
 	protected void bindAttribute(int attribute, String variableName) {
 		GL20.glBindAttribLocation(programID, attribute, variableName);

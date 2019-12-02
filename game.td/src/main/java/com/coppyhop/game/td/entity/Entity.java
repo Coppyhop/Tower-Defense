@@ -1,8 +1,9 @@
 package com.coppyhop.game.td.entity;
 
-import com.coppyhop.game.td.renderer.Texture;
-import com.coppyhop.game.td.renderer.shaders.ShaderProgram;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
 
+import com.coppyhop.game.td.renderer.Texture;
 /**
  * Entity
  * 
@@ -15,70 +16,49 @@ import com.coppyhop.game.td.renderer.shaders.ShaderProgram;
  *
  */
 public class Entity {
-	private float x;
-	private float y;
-	private float width;
-	private float height;
-	private float rotation;
 	private Texture sprite;
-	private ShaderProgram shader;
+	private Matrix4f translation;
+	private Vector3f position;
 	
 	public Entity(float x, float y, float width, float height, float rotation,
 			Texture sprite) {
-		this.x = x;
-		this.y = y;
-		this.width = width;
-		this.height = height;
-		this.rotation = rotation;
 		this.sprite = sprite;
+		translation = new Matrix4f();
+		translation.identity();
+		translation.scale(width/320, height/240, 1);
+		position = new Vector3f(x/320,y/240,0);
+		
+	}
+	
+	public void setSize(float width, float height) {
+		translation = new Matrix4f();
+		translation.identity();
+		translation.scale(width/320, height/240, 1);
+	}
+	
+	public Vector3f getPosition() {
+		return position;
 	}
 
-	public ShaderProgram getShader() {
-		return shader;
+	public void setPosition(Vector3f position) {
+		this.position = new Vector3f(position.x/320,position.y/240,0);
+	}
+	
+	public void setPosition(float x, float y) {
+		this.position = new Vector3f(x/320,y/240,0);
+	}
+	
+	public void translate(float x, float y) {
+		position.x+= x/320;
+		position.y+=y/240;
 	}
 
-	public void setShader(ShaderProgram shader) {
-		this.shader = shader;
+	public void scale(float factor) {
+		translation.scale(factor);
 	}
 
-	public float getX() {
-		return x;
-	}
-
-	public void setX(float x) {
-		this.x = x;
-	}
-
-	public float getY() {
-		return y;
-	}
-
-	public void setY(float y) {
-		this.y = y;
-	}
-
-	public float getWidth() {
-		return width;
-	}
-
-	public void setWidth(float width) {
-		this.width = width;
-	}
-
-	public float getHeight() {
-		return height;
-	}
-
-	public void setHeight(float height) {
-		this.height = height;
-	}
-
-	public float getRotation() {
-		return rotation;
-	}
-
-	public void setRotation(float rotation) {
-		this.rotation = rotation;
+	public Matrix4f getTranslation() {
+		return translation;
 	}
 
 	public Texture getSprite() {

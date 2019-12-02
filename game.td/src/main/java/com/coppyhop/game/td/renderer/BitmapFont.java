@@ -3,6 +3,10 @@ package com.coppyhop.game.td.renderer;
 import java.util.ArrayList;
 
 /**
+ * LEGACY CODE - CURRENTLY INACCESSIBLE BY ANY NORMAL MEANS
+ * I need to refactor all of text stuff using the new rendering system, so
+ * I disabled it. 
+ * 
  * BitmapFont
  * 
  * Represents a font that can be used by the rendering engine to draw text on 

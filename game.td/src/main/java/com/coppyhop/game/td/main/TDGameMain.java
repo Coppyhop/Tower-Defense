@@ -5,7 +5,7 @@ import com.coppyhop.game.td.entity.Entity;
 import com.coppyhop.game.td.renderer.RenderEngine;
 import com.coppyhop.game.td.renderer.Texture;
 import com.coppyhop.game.td.renderer.WindowManager;
-import com.coppyhop.game.td.renderer.shaders.TestShader;
+import com.coppyhop.game.td.renderer.shaders.BaseShader;
 
 /**
  * TDGameMain
@@ -27,21 +27,21 @@ public class TDGameMain {
 		window = WindowManager.createWindow(
 				640, 480, "TDGame - OpenGL 2.0", true);
 		renderer = new RenderEngine(640,480);
-		TestShader shader = new TestShader();
 		Texture test = Loader.loadTexture(
 				"C:\\Users\\kjbre\\OneDrive\\Pictures\\goku.png");
-		Entity anon = new Entity(0,0,8,8, 0, test);
-		anon.setShader(shader);
+		Entity anon = new Entity(0,0,48,48, 0, test);
+		Entity bob = new Entity(0,0,48,48,0, test);
+		bob.setSize(48, 96);
 		while(!WindowManager.shouldWindowClose(window)) {
 			renderer.prepareRender();
-			anon.setWidth(anon.getWidth()+0.1f*renderer.getDeltaTime());
-			anon.setHeight(anon.getHeight() + 0.1f*renderer.getDeltaTime());
 			loop();
+			anon.translate(0.1f*renderer.getDeltaTime(), 0);
+			bob.scale(1.01f);
+			renderer.renderEntity(bob);
 			renderer.renderEntity(anon);
 			renderer.endRender();
 			WindowManager.update(window);
 		}
-		shader.cleanUp();
 		WindowManager.destroyWindow(window);
 	}
 	

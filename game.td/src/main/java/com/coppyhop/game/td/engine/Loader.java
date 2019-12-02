@@ -1,17 +1,12 @@
 package com.coppyhop.game.td.engine;
 
-import java.io.BufferedReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.nio.ByteBuffer;
-import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
 
-import com.coppyhop.game.td.renderer.BitmapFont;
-import com.coppyhop.game.td.renderer.BitmapGlyph;
 import com.coppyhop.game.td.renderer.Texture;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
@@ -28,8 +23,18 @@ import de.matthiasmann.twl.utils.PNGDecoder.Format;
  *
  */
 public class Loader {
-	//TODO: Make all these methods static they in no way really rely on a loader
-	//instance being made
+
+	/**
+	 * loadTexture
+	 * 
+	 * loads the given filename into memory, converting it into an opengl
+	 * texture. This specifically disables texture filters to make pixel art
+	 * look better.
+	 * 
+	 * @param filename The file we wish to load into memory
+	 * @return Texture the texture object representing the texture that was
+	 *                 just loaded
+	 */
 	public static Texture loadTexture(String filename){
 		ByteBuffer buf = null;
 		int tWidth = 0;
@@ -61,7 +66,9 @@ public class Loader {
 		GL11.glBindTexture(0, GL11.GL_TEXTURE_2D);
 		return new Texture(texId);
 	}
-	
+	/*
+	 * This is legacy content that has yet to be updated to the new engine
+	 * design.
 	public static BitmapFont loadFont(String filename){
 		ArrayList<BitmapGlyph> glyphs = new ArrayList<>();
 		Texture bitmap = null;
@@ -131,6 +138,6 @@ public class Loader {
 			System.exit(1);
 		}
 		 return null;
-	}
+	}*/
 	
 }
