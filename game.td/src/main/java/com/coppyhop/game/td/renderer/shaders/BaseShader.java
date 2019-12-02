@@ -3,6 +3,16 @@ package com.coppyhop.game.td.renderer.shaders;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
+/**
+ * BaseShader
+ * 
+ * This represents the shader program used by entities rendered through the 
+ * rendering engine. Support for custom shaders is in the works but as of right
+ * now this is the only shader available for use on rendered entities. 
+ * 
+ * @author kjbre
+ *
+ */
 public class BaseShader extends ShaderProgram{
 
 	private static final String VERTEX_FILE = 

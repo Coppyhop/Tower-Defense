@@ -54,17 +54,23 @@ public class RenderEngine {
 		this.width = width;
 		this.height = height;
 		this.UIScale = UIScale;
-		initOpenGL(width, height);
+		initOpenGL();
 	}
 	
 	public RenderEngine(int width, int height){
 		this.width = width;
 		this.height = height;
 		this.UIScale = 1.0f;
-		initOpenGL(width, height);
+		initOpenGL();
 	}
 
-	private void initOpenGL(int width, int height){
+	/**
+	 * initOpenGL
+	 * 
+	 * initializes the canvas and prepares it for our game's rendering loop.
+	 * also sets up the delta time so it isn't insane on the first frame.
+	 */
+	private void initOpenGL(){
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -103,6 +109,13 @@ public class RenderEngine {
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
 
+	/**
+	 * prepareRender
+	 * 
+	 * Prepares the given frame for rendering. Clears the canvas and binds the
+	 * buffers needed to render our quad to the screen. As our only vertices
+	 * are quads it is fine to just bind our buffers at the beginning.
+	 */
 	public void prepareRender(){
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
@@ -114,6 +127,13 @@ public class RenderEngine {
 		
 	}
 
+	/**
+	 * endRender
+	 * 
+	 * Finishes rendering the current frame. Disables and cleans up the remnants
+	 * it also calculates the delta time for this frame to maintain constant
+	 * speed despite fluctuating framerate.
+	 */
 	public void endRender() {
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(0);

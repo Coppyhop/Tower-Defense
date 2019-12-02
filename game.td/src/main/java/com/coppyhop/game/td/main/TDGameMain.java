@@ -5,7 +5,6 @@ import com.coppyhop.game.td.entity.Entity;
 import com.coppyhop.game.td.renderer.RenderEngine;
 import com.coppyhop.game.td.renderer.Texture;
 import com.coppyhop.game.td.renderer.WindowManager;
-import com.coppyhop.game.td.renderer.shaders.BaseShader;
 
 /**
  * TDGameMain
@@ -34,7 +33,6 @@ public class TDGameMain {
 		bob.setSize(48, 96);
 		while(!WindowManager.shouldWindowClose(window)) {
 			renderer.prepareRender();
-			loop();
 			anon.translate(0.1f*renderer.getDeltaTime(), 0);
 			bob.scale(1.01f);
 			renderer.renderEntity(bob);
@@ -43,10 +41,6 @@ public class TDGameMain {
 			WindowManager.update(window);
 		}
 		WindowManager.destroyWindow(window);
-	}
-	
-	private static void loop() {
-
 	}
 
 }
