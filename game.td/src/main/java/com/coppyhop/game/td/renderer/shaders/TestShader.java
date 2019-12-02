@@ -14,6 +14,7 @@ public class TestShader extends ShaderProgram{
 	@Override
 	protected void bindAttributes() {
 		bindAttribute(0, "position");
+		bindAttribute(1, "textureCoords");
 	}
 
 }

@@ -36,15 +36,13 @@ public class RenderEngine {
 	
 	//Vertex and index data for a 2D rectangle (only shape needed for 2D games)
 	private float[] vertices = {
-			    -1f, 1f, 0f,
-			    -1f, -1f, 0f,
-			    1f, -1f, 0f,
-			    1f, 1f, 0f,
-			  };
-	
-	private int[] indicies = {
-			0,1,3,3,1,2
+		-1f, 1f, 0f,
+		-1f, -1f, 0f,
+		1f, -1f, 0f,
+		1f, 1f, 0f,
 	};
+	private float[] textureCoords = {0,0,0,1,1,1,1,0};
+	private int[] indicies = {0,1,3,3,1,2};
 	
 	//Buffer ids
 	private int rectVBOId;
@@ -85,10 +83,14 @@ public class RenderEngine {
 		FloatBuffer buffer = BufferUtils.createFloatBuffer(vertices.length);
 		buffer.put(vertices);
 		buffer.flip();
-		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW);
+		FloatBuffer buffer3 = BufferUtils.createFloatBuffer(textureCoords.length);
+		buffer3.put(textureCoords);
+		buffer3.flip();
+		GL15.glBufferData(GL15.GL_ARRAY_BUFFER, (long)vertices.length*27, GL15.GL_STATIC_DRAW);
+		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, 0, buffer);
+		GL15.glBufferSubData(GL15.GL_ARRAY_BUFFER, vertices.length*4, buffer3);
 		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
-		
 		iboID = GL15.glGenBuffers();
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
 		IntBuffer buffer2 = BufferUtils.createIntBuffer(indicies.length);
@@ -152,8 +154,11 @@ public class RenderEngine {
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
 		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
 		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, vertices.length*4);
 		GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
+		GL20.glEnableVertexAttribArray(1);
 		GL20.glDisableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);

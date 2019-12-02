@@ -12,7 +12,7 @@ package com.coppyhop.game.td.renderer;
  * @author kyle
  *
  */
-class BitmapGlyph {
+public class BitmapGlyph {
 	private final int charId;
 	private final char charRep;
 	private final float x;

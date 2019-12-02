@@ -1,5 +1,4 @@
 TODO FOR ENGINE:
-Texturing on Shaders
 Matrices for position, scale, and such
 
 GUI (Will use yoga and Nuklear instead of re-creating the wheel)

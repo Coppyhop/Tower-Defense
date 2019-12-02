@@ -1,4 +1,4 @@
-package com.coppyhop.game.td.renderer;
+package com.coppyhop.game.td.engine;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -9,6 +9,10 @@ import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import org.lwjgl.opengl.GL11;
+
+import com.coppyhop.game.td.renderer.BitmapFont;
+import com.coppyhop.game.td.renderer.BitmapGlyph;
+import com.coppyhop.game.td.renderer.Texture;
 
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
@@ -58,7 +62,7 @@ public class Loader {
 		return new Texture(texId);
 	}
 	
-	public BitmapFont loadFont(String filename){
+	public static BitmapFont loadFont(String filename){
 		ArrayList<BitmapGlyph> glyphs = new ArrayList<>();
 		Texture bitmap = null;
 		float glyphSize = 0;
