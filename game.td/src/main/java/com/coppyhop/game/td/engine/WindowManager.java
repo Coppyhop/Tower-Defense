@@ -53,7 +53,8 @@ public class WindowManager {
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
         //Make sure the client has at least openGL 3 for our features
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        MouseInputHandler.init();
         long window = glfwCreateWindow(width, height, title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");
@@ -61,6 +62,12 @@ public class WindowManager {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                 glfwSetWindowShouldClose(theWindow, true);
         });
+		glfwSetCursorPosCallback(window, new GLFWCursorPosCallback() {
+		    @Override
+		    public void invoke(long window, double xpos, double ypos) {
+		    	MouseInputHandler.poll((float)xpos, (float)ypos);
+		    }
+		});
         glfwMakeContextCurrent(window);
         GL.createCapabilities();
         if(vSync){
