@@ -7,8 +7,6 @@ import java.nio.ByteBuffer;
 
 import org.lwjgl.opengl.GL11;
 
-import com.coppyhop.game.td.renderer.Texture;
-
 import de.matthiasmann.twl.utils.PNGDecoder;
 import de.matthiasmann.twl.utils.PNGDecoder.Format;
 

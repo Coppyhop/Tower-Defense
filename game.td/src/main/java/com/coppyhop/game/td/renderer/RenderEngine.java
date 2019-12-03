@@ -5,6 +5,7 @@ import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL30;
 
+import com.coppyhop.game.td.engine.Texture;
 import com.coppyhop.game.td.entity.Entity;
 import com.coppyhop.game.td.renderer.shaders.BasePostProcesingShader;
 import com.coppyhop.game.td.renderer.shaders.BaseShader;
@@ -14,6 +15,8 @@ import static org.lwjgl.opengl.GL11.GL_DEPTH_BUFFER_BIT;
 
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
+import java.util.LinkedList;
+import java.util.List;
 
 import org.lwjgl.BufferUtils;
 
@@ -32,14 +35,16 @@ import org.lwjgl.BufferUtils;
  */
 public class RenderEngine {
 	
-	private int width, height;
-	private float UIScale;
+	private static int WIDTH, HEIGHT;
+	private static float UI_SCALE;
 	private long deltaTime;
 	private long lastFrame;
 	private BaseShader shader;
 	private BasePostProcesingShader ppShader;
 	private int fboTexID;
 	private float time = 0;
+	private List<Entity> toRender;
+	public static Texture blankTexture = new Texture(0);
 	
 	//Vertex and index data for a 2D rectangle (only shape needed for 2D games)
 	private float[] vertices = {
@@ -57,16 +62,16 @@ public class RenderEngine {
 	private int fboID;
 	
 	public RenderEngine(int width, int height, float UIScale){
-		this.width = width;
-		this.height = height;
-		this.UIScale = UIScale;
+		RenderEngine.WIDTH = width;
+		RenderEngine.HEIGHT = height;
+		RenderEngine.UI_SCALE = UIScale;
 		initOpenGL();
 	}
 	
 	public RenderEngine(int width, int height){
-		this.width = width;
-		this.height = height;
-		this.UIScale = 1.0f;
+		RenderEngine.WIDTH = width;
+		RenderEngine.HEIGHT = height;
+		RenderEngine.UI_SCALE = 1.0f;
 		initOpenGL();
 	}
 
@@ -77,6 +82,7 @@ public class RenderEngine {
 	 * also sets up the delta time so it isn't insane on the first frame.
 	 */
 	private void initOpenGL(){
+		toRender = new LinkedList<Entity>();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
 		GL11.glEnable(GL11.GL_BLEND);
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -123,7 +129,7 @@ public class RenderEngine {
 		fboTexID = GL11.glGenTextures();
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fboTexID);
 		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, 
-				width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
+				WIDTH, HEIGHT, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 
 				GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
 		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 
@@ -169,10 +175,7 @@ public class RenderEngine {
 	}
 	
 	public void drawRender() {
-		time+=1f/255f;
-		if(time >=1) {
-			time = 0;
-		}
+		time+=0.5f;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
@@ -190,16 +193,16 @@ public class RenderEngine {
 		lastFrame = time;
 	}
 	
-	public float getWidth(){
-		return width/UIScale;
+	public static float getWidth(){
+		return WIDTH/UI_SCALE;
 	}
 
-	public float getHeight(){
-		return height/UIScale;
+	public static float getHeight(){
+		return HEIGHT/UI_SCALE;
 	}
 	
-	public float getUIScale() {
-		return UIScale;
+	public static float getUIScale() {
+		return UI_SCALE;
 	}
 	
 	public float getDeltaTime() {
@@ -214,6 +217,19 @@ public class RenderEngine {
 		GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture);
 	}
 
+	public void processEntity(Entity entity) {
+		toRender.add(entity);
+	}
+	
+	public void render() {
+		prepareRender();
+		for(Entity e: toRender) {
+			renderEntity(e);
+		}
+		endRender();
+		drawRender();
+		toRender.clear();
+	}
 	//Might not even be needed anymore with shaders
 	/*public void setColor(float r, float g, float b, float a){
 		GL11.glColor4f(r,g,b,a);

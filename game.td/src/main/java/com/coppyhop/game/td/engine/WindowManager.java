@@ -1,4 +1,4 @@
-package com.coppyhop.game.td.renderer;
+package com.coppyhop.game.td.engine;
 
 import org.lwjgl.glfw.*;
 import org.lwjgl.opengl.GL;
@@ -53,7 +53,7 @@ public class WindowManager {
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
         //Make sure the client has at least openGL 3 for our features
         glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 2);
         long window = glfwCreateWindow(width, height, title, NULL, NULL);
         if ( window == NULL )
             throw new RuntimeException("Failed to create the GLFW window");

@@ -3,7 +3,8 @@ package com.coppyhop.game.td.entity;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
 
-import com.coppyhop.game.td.renderer.Texture;
+import com.coppyhop.game.td.engine.Texture;
+import com.coppyhop.game.td.renderer.RenderEngine;
 /**
  * Entity
  * 
@@ -20,14 +21,18 @@ public class Entity {
 	private Matrix4f translation;
 	private Vector3f position;
 	private Vector3f color;
+	private static float widthFactor = RenderEngine.getWidth()/2;
+	private static float heightFactor = RenderEngine.getHeight()/2;
 	
 	public Entity(float x, float y, float width, float height, float rotation,
 			Texture sprite) {
+		widthFactor = RenderEngine.getWidth()/2;
+		heightFactor = RenderEngine.getHeight()/2;
 		this.sprite = sprite;
 		translation = new Matrix4f();
 		translation.identity();
-		translation.scale(width/320, height/240, 1);
-		position = new Vector3f(x/320,y/240,0);
+		translation.scale(width/widthFactor, height/heightFactor, 1);
+		position = new Vector3f(x/widthFactor,y/heightFactor,0);
 		color = new Vector3f(1,1,1);
 		
 	}
@@ -42,7 +47,7 @@ public class Entity {
 	public void setSize(float width, float height) {
 		translation = new Matrix4f();
 		translation.identity();
-		translation.scale(width/320, height/240, 1);
+		translation.scale(width/widthFactor, height/heightFactor, 1);
 	}
 	
 	public Vector3f getPosition() {
@@ -50,24 +55,24 @@ public class Entity {
 	}
 	
 	public float getRelativeX() {
-		return position.x * 320;
+		return position.x * widthFactor;
 	}
 	
 	public float getRelativeY() {
-		return position.y * 320;
+		return position.y * widthFactor;
 	}
 
 	public void setPosition(Vector3f position) {
-		this.position = new Vector3f(position.x/320,position.y/240,0);
+		this.position = new Vector3f(position.x/widthFactor,position.y/heightFactor,0);
 	}
 	
 	public void setPosition(float x, float y) {
-		this.position = new Vector3f(x/320,y/240,0);
+		this.position = new Vector3f(x/widthFactor,y/heightFactor,0);
 	}
 	
 	public void translate(float x, float y) {
-		position.x+= x/320;
-		position.y+=y/240;
+		position.x+= x/widthFactor;
+		position.y+=y/heightFactor;
 	}
 
 	public void scale(float factor) {
