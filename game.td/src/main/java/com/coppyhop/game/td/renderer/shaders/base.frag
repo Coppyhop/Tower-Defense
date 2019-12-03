@@ -1,9 +1,9 @@
-#version 150 core
+#version 400 core
 
 in vec2 passTexture;
 in vec3 color;
 
-out vec4 outColor;
+layout(location = 0) out vec4 outColor;
 
 uniform sampler2D textureSampler;
 

@@ -58,6 +58,10 @@ public abstract class ShaderProgram {
 		}
 	}
 	
+	protected void loadFloat(int location, float value) {
+		GL20.glUniform1f(location, value);
+	}
+	
 	public void start() {
 		GL20.glUseProgram(programID);
 	}

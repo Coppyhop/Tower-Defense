@@ -51,8 +51,8 @@ public class WindowManager {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
         glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
         glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
-        //Make sure the client has at least openGL 2 for our features
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 2);
+        //Make sure the client has at least openGL 3 for our features
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
         glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
         long window = glfwCreateWindow(width, height, title, NULL, NULL);
         if ( window == NULL )

@@ -3,8 +3,10 @@ package com.coppyhop.game.td.renderer;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL15;
 import org.lwjgl.opengl.GL20;
+import org.lwjgl.opengl.GL30;
 
 import com.coppyhop.game.td.entity.Entity;
+import com.coppyhop.game.td.renderer.shaders.BasePostProcesingShader;
 import com.coppyhop.game.td.renderer.shaders.BaseShader;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -35,6 +37,9 @@ public class RenderEngine {
 	private long deltaTime;
 	private long lastFrame;
 	private BaseShader shader;
+	private BasePostProcesingShader ppShader;
+	private int fboTexID;
+	private float time = 0;
 	
 	//Vertex and index data for a 2D rectangle (only shape needed for 2D games)
 	private float[] vertices = {
@@ -49,6 +54,7 @@ public class RenderEngine {
 	//Buffer ids
 	private int rectVBOId;
 	private int iboID;
+	private int fboID;
 	
 	public RenderEngine(int width, int height, float UIScale){
 		this.width = width;
@@ -76,8 +82,10 @@ public class RenderEngine {
 		GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 		glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		loadVertices();
+		genFBO();
 		lastFrame = System.nanoTime()/ 1000000;
 		shader = new BaseShader();
+		ppShader = new BasePostProcesingShader();
 	}
 	
 	/**
@@ -108,6 +116,24 @@ public class RenderEngine {
 		GL15.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, buffer2, GL15.GL_STATIC_DRAW);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
 	}
+	
+	public void genFBO() {
+		fboID = GL30.glGenFramebuffers();
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fboID);
+		fboTexID = GL11.glGenTextures();
+		GL11.glBindTexture(GL11.GL_TEXTURE_2D, fboTexID);
+		GL11.glTexImage2D(GL11.GL_TEXTURE_2D, 0, GL11.GL_RGB, 
+				width, height, 0, GL11.GL_RGB, GL11.GL_UNSIGNED_BYTE, 0);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 
+				GL11.GL_TEXTURE_MIN_FILTER, GL11.GL_NEAREST);
+		GL11.glTexParameteri(GL11.GL_TEXTURE_2D, 
+				GL11.GL_TEXTURE_MAG_FILTER, GL11.GL_NEAREST);
+		GL30.glFramebufferTexture2D
+		(GL30.GL_FRAMEBUFFER, GL30.GL_COLOR_ATTACHMENT0, GL11.GL_TEXTURE_2D, 
+				fboTexID, 0);
+		GL30.glDrawBuffers(GL30.GL_COLOR_ATTACHMENT0);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+	}
 
 	/**
 	 * prepareRender
@@ -117,6 +143,7 @@ public class RenderEngine {
 	 * are quads it is fine to just bind our buffers at the beginning.
 	 */
 	public void prepareRender(){
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fboID);;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
@@ -124,7 +151,6 @@ public class RenderEngine {
 		GL20.glEnableVertexAttribArray(1);
 		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
 		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, vertices.length*4);
-		
 	}
 
 	/**
@@ -139,6 +165,26 @@ public class RenderEngine {
 		GL20.glDisableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
+		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
+	}
+	
+	public void drawRender() {
+		time+=1f/255f;
+		if(time >=1) {
+			time = 0;
+		}
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
+		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
+		GL20.glEnableVertexAttribArray(0);
+		GL20.glEnableVertexAttribArray(1);
+		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
+		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, vertices.length*4);
+		ppShader.start();
+		ppShader.loadTime(time);
+		setTexture(fboTexID);
+		GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
+		ppShader.stop();
 		long time = System.nanoTime()/ 1000000;
 		deltaTime = time - lastFrame;
 		lastFrame = time;
@@ -185,7 +231,7 @@ public class RenderEngine {
 	 */
 	public void renderEntity(Entity entity) {
 		shader.start();
-		shader.color(1, 1, 1);
+		shader.color(entity.getColor());
 		shader.position(entity.getPosition());
 		shader.uploadTransformationMatrix(entity.getTranslation());
 		setTexture(entity.getSprite());

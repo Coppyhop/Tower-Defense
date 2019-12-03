@@ -19,6 +19,7 @@ public class Entity {
 	private Texture sprite;
 	private Matrix4f translation;
 	private Vector3f position;
+	private Vector3f color;
 	
 	public Entity(float x, float y, float width, float height, float rotation,
 			Texture sprite) {
@@ -27,9 +28,17 @@ public class Entity {
 		translation.identity();
 		translation.scale(width/320, height/240, 1);
 		position = new Vector3f(x/320,y/240,0);
+		color = new Vector3f(1,1,1);
 		
 	}
-	
+	public Vector3f getColor() {
+		return color;
+	}
+
+	public void setColor(Vector3f color) {
+		this.color = color;
+	}
+
 	public void setSize(float width, float height) {
 		translation = new Matrix4f();
 		translation.identity();
@@ -38,6 +47,14 @@ public class Entity {
 	
 	public Vector3f getPosition() {
 		return position;
+	}
+	
+	public float getRelativeX() {
+		return position.x * 320;
+	}
+	
+	public float getRelativeY() {
+		return position.y * 320;
 	}
 
 	public void setPosition(Vector3f position) {

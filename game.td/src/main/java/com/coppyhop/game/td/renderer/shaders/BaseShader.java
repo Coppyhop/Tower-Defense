@@ -50,6 +50,9 @@ public class BaseShader extends ShaderProgram{
 		super.loadVector3f(colorLocation, color);
 	}
 
+	public void color(Vector3f color) {
+		super.loadVector3f(colorLocation, color);
+	}
 	public void position(Vector3f pos) {
 		super.loadVector3f(coordLocation, pos);
 	}
