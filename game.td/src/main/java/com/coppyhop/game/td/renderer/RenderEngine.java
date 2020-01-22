@@ -7,7 +7,6 @@ import org.lwjgl.opengl.GL30;
 
 import com.coppyhop.game.td.engine.Texture;
 import com.coppyhop.game.td.entity.Entity;
-import com.coppyhop.game.td.renderer.shaders.BasePostProcesingShader;
 import com.coppyhop.game.td.renderer.shaders.BaseShader;
 
 import static org.lwjgl.opengl.GL11.*;
@@ -40,7 +39,6 @@ public class RenderEngine {
 	private long deltaTime;
 	private long lastFrame;
 	private BaseShader shader;
-	private BasePostProcesingShader ppShader;
 	private int fboTexID;
 	private float time = 0;
 	private List<Entity> toRender;
@@ -91,7 +89,6 @@ public class RenderEngine {
 		genFBO();
 		lastFrame = System.nanoTime()/ 1000000;
 		shader = new BaseShader();
-		ppShader = new BasePostProcesingShader();
 	}
 	
 	/**
@@ -149,7 +146,6 @@ public class RenderEngine {
 	 * are quads it is fine to just bind our buffers at the beginning.
 	 */
 	public void prepareRender(){
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fboID);;
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
@@ -171,23 +167,10 @@ public class RenderEngine {
 		GL20.glDisableVertexAttribArray(0);
 		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0);
 		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, 0);
-		GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, 0);
 	}
 	
 	public void drawRender() {
 		time+=0.5f;
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, rectVBOId);
-		GL15.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, iboID);
-		GL20.glEnableVertexAttribArray(0);
-		GL20.glEnableVertexAttribArray(1);
-		GL20.glVertexAttribPointer(0, 3, GL11.GL_FLOAT, false, 0, 0);
-		GL20.glVertexAttribPointer(1, 2, GL11.GL_FLOAT, false, 0, vertices.length*4);
-		ppShader.start();
-		ppShader.loadTime(time);
-		setTexture(fboTexID);
-		GL11.glDrawElements(GL11.GL_TRIANGLES, 6, GL11.GL_UNSIGNED_INT, 0);
-		ppShader.stop();
 		long time = System.nanoTime()/ 1000000;
 		deltaTime = time - lastFrame;
 		lastFrame = time;

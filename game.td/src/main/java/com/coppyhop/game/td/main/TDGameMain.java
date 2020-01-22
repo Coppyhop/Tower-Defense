@@ -27,7 +27,7 @@ public class TDGameMain {
 	public static void main(String[] args) {
 		WindowManager.init();
 		window = WindowManager.createWindow(
-				1600, 900, "TDGame - OpenGL 3.0", true);
+				1600, 900, "TDGame - OpenGL 2.0", true);
 		renderer = new RenderEngine(1600,900);
 		Texture test = Loader.loadTexture(
 				"src/main/resources/puar.png");

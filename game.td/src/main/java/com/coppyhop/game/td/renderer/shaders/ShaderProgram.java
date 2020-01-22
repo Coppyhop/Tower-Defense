@@ -102,6 +102,7 @@ public abstract class ShaderProgram {
 	 * @return int The id of the shader we just compiled
 	 */
 	private static int loadShader(String file, int type) {
+		System.out.println("Loading shader: " + file);
 		StringBuilder shaderSource = new StringBuilder();
 		try {
 			BufferedReader reader = new BufferedReader(new FileReader(file));
